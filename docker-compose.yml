@@ -1,7 +1,7 @@
 services:
   postgres:
     build:
-      context: ./app/db/
+      context: ./db/
       dockerfile: Dockerfile
     container_name: postgres-container
     environment:
@@ -13,7 +13,6 @@ services:
       - /tmp/database:/data/simple-app
     ports:
       - "5432:5432"
-    restart: unless-stopped
   web:
     build:
       context: ./app/

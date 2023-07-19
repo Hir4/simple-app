@@ -1,6 +1,6 @@
 import uuid
 
-import db.database_functions as db_funcs
+from database_functions import save_data, get_data
 from flask import Flask, redirect, render_template, request
 
 app = Flask(__name__)
@@ -14,12 +14,12 @@ def main_page():
 @app.route("/data", methods=["POST", "GET"])
 def data_page():
     if request.method == "GET":
-        data = db_funcs.get_data()
+        data = get_data()
         return render_template("data.html", form_data=data)
     if request.method == "POST":
         treated_form = dict(request.form)
         treated_form[str(uuid.uuid1())] = treated_form.pop("thought")
-        db_funcs.save_data(treated_form)
+        save_data(treated_form)
         return redirect("/")
 
 
