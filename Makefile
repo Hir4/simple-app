@@ -5,3 +5,6 @@ dot_env:
 	pip install Flask
 	pip install isort
 	pip install black
+
+run_app:
+	docker compose up
