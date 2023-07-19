@@ -1,9 +1,8 @@
 import json
 import uuid
 
+import db.database_functions as db_funcs
 from flask import Flask, redirect, render_template, request
-
-from db.save_data import save_data
 
 app = Flask(__name__)
 
@@ -16,14 +15,12 @@ def main_page():
 @app.route("/data", methods=["POST", "GET"])
 def data_page():
     if request.method == "GET":
-        filename = "./db/phrases.json"
-        with open(filename, "r") as read_file:
-            treatedJson = json.load(read_file)
-            return render_template("data.html", form_data=treatedJson)
+        data = db_funcs.get_data()
+        return render_template("data.html", form_data=data)
     if request.method == "POST":
         treated_form = dict(request.form)
         treated_form[str(uuid.uuid1())] = treated_form.pop("thought")
-        save_data(treated_form)
+        db_funcs.save_data(treated_form)
         return redirect("/")
 
 

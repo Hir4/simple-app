@@ -1,0 +1,6 @@
+-- CREATE TABLE
+DROP TABLE IF EXISTS thoughts;
+CREATE TABLE thoughts (
+    id VARCHAR PRIMARY KEY,
+    thoughts VARCHAR NOT NULL
+);
