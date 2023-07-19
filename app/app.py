@@ -11,7 +11,7 @@ def main_page():
     return render_template("forms.html")
 
 
-@app.route("/data", methods=["POST", "GET"])
+@app.route("/data/", methods=["POST", "GET"])
 def data_page():
     if request.method == "GET":
         data = get_data()
