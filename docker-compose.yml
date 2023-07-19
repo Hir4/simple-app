@@ -1,0 +1,25 @@
+services:
+  postgres:
+    build:
+      context: ./app/db/
+      dockerfile: Dockerfile
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: "db_simple_app"
+      POSTGRES_USER: "user_fael"
+      POSTGRES_PASSWORD: "test123"
+      PGDATA: "/data/simple-app"       
+    volumes:
+      - "/tmp/database:/data/simple-app"
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  web:
+    build:
+      context: ./app/
+      dockerfile: Dockerfile
+    container_name: simple-app
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
