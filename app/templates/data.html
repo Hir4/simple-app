@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button onclick="history.back()">Go Back</button>
+  </br>
+  {% for key,value in form_data.items() %}
+  <p> {{value}}</p>
+  {% endfor %}
+</body>
+
+</html>
