@@ -1,4 +1,3 @@
-import json
 import uuid
 
 import db.database_functions as db_funcs
