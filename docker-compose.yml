@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: "test123"
       PGDATA: "/data/simple-app"       
     volumes:
-      - "/tmp/database:/data/simple-app"
+      - /tmp/database:/data/simple-app
     ports:
       - "5432:5432"
     restart: unless-stopped
@@ -19,6 +19,8 @@ services:
       context: ./app/
       dockerfile: Dockerfile
     container_name: simple-app
+    volumes:
+      - ./app:/app:ro
     depends_on:
       - postgres
     ports:
