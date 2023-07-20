@@ -23,6 +23,7 @@ def save_data(data):
     cur.close()
     conn.close()
 
+
 def get_data():
     conn = _connect_to_db()
     cur = conn.cursor()

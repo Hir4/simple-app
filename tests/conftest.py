@@ -1,6 +1,7 @@
 import pytest
 import psycopg2
 
+
 @pytest.fixture
 def db_conn():
     conn = psycopg2.connect(
