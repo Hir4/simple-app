@@ -2,3 +2,4 @@ Flask
 isort
 black
 pytest
+psycopg2-binary
