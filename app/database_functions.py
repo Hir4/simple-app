@@ -1,3 +1,4 @@
+#TODO atualizar para o 3
 import psycopg2
 
 
@@ -13,23 +14,19 @@ def _connect_to_db():
 
 
 def save_data(data):
-    conn = _connect_to_db()
-    cur = conn.cursor()
-    for key, value in data.items():
-        insert_query = f"INSERT INTO thoughts(id, thoughts) VALUES('{key}', '{value}')"
+    with _connect_to_db() as conn:
+        with conn.cursor() as cur:
+            #TODO remover sql injection
+            for key, value in data.items():
+                insert_query = f"INSERT INTO thoughts(id, thoughts) VALUES('{key}', '{value}')"
 
-    cur.execute(insert_query)
-    conn.commit()
-    cur.close()
-    conn.close()
+            cur.execute(insert_query)
 
 
 def get_data():
-    conn = _connect_to_db()
-    cur = conn.cursor()
-    select_query = "SELECT * FROM thoughts"
-    cur.execute(select_query)
-    result = cur.fetchall()
-    cur.close()
-    conn.close()
-    return dict(result)
+    with _connect_to_db() as conn:
+        with conn.cursor() as cur:
+            select_query = "SELECT * FROM thoughts"
+            cur.execute(select_query)
+            result = cur.fetchall()
+            return dict(result)

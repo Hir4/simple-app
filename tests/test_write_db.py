@@ -16,4 +16,4 @@ def test_write_db(db_conn):
     cur.execute(test_write_query)
     result = cur.fetchone()
     cur.close()
-    assert result[0] == True
+    assert result[0] is True
