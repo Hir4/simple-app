@@ -1,10 +1,9 @@
-#TODO atualizar para o 3
-import psycopg2
+import psycopg
 
 
 def _connect_to_db():
-    conn = psycopg2.connect(
-        database="db_simple_app",
+    conn = psycopg.connect(
+        dbname="db_simple_app",
         host="postgres",
         user="user_fael",
         password="test123",
@@ -13,20 +12,26 @@ def _connect_to_db():
     return conn
 
 
-def save_data(data):
+def create_account(new_account):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
-            #TODO remover sql injection
-            for key, value in data.items():
-                insert_query = f"INSERT INTO thoughts(id, thoughts) VALUES('{key}', '{value}')"
+            insert_query = (
+                "INSERT INTO account (id, username, password) VALUES (%s, %s, %s);"
+            )
+            query_data = (
+                new_account.id,
+                new_account.username,
+                new_account.password,
+            )
 
-            cur.execute(insert_query)
+            cur.execute(insert_query, query_data)
+    return "Account created successfully"
 
 
-def get_data():
+def get_accounts():
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
-            select_query = "SELECT * FROM thoughts"
+            select_query = "SELECT * FROM account"
             cur.execute(select_query)
             result = cur.fetchall()
-            return dict(result)
+            return result
