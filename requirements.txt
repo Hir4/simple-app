@@ -2,6 +2,6 @@ Flask
 isort
 black
 pytest
-psycopg2-binary
+psycopg
 fastapi
 uvicorn[standard]
