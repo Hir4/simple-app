@@ -12,7 +12,7 @@ services:
       - "5432:5432"
   web:
     image: python
-    command: sh -c "pip install -r ./app/requirements.txt && python3 ./app/app.py"
+    command: sh -c "pip install -r ./app/requirements.txt && uvicorn --app-dir=app/ --host ${HOST} --port ${PORT} main:app"
     volumes:
       - ./app/:/app/
       - ./requirements.txt:/app/requirements.txt
