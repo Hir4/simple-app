@@ -11,6 +11,8 @@ class AccountModel(BaseModel):
 
 
 class ExchangeModel(BaseModel):
-    symbol: Annotated[str, Query(pattern=r"\b(?:BRL|USD)\b")]
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+    symbol: str
+    timestamp: Optional[str] = None
+    # symbol: Annotated[str, Query(pattern=r"\b(?:BRL|USD|ethbtc)\b")]
+    # start_date: Optional[str] = None
+    # end_date: Optional[str] = None

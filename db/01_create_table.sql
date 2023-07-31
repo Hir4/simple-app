@@ -5,3 +5,12 @@ CREATE TABLE account (
     username VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL
 );
+
+DROP TABLE IF EXISTS exchange_rate;
+CREATE TABLE exchange_rate (
+    id VARCHAR PRIMARY KEY,
+    symbol VARCHAR NOT NULL,
+    amount VARCHAR NOT NULL,
+    price VARCHAR NOT NULL,
+    type VARCHAR NOT NULL
+);

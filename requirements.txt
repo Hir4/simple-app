@@ -5,3 +5,4 @@ pytest
 psycopg
 fastapi
 uvicorn[standard]
+requests
