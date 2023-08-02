@@ -1,17 +1,16 @@
 services:
   postgres:
     image: postgres
-    environment:
-      POSTGRES_DB: "db_simple_app"
-      POSTGRES_USER: "user_fael"
-      POSTGRES_PASSWORD: "test123"
-      PGDATA: "/data/simple-app"       
+    env_file:
+      - .env
     volumes:
       - ./db/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
   web:
     image: python
+    env_file:
+      - .env
     command: sh -c "pip install -r ./app/requirements.txt && uvicorn --app-dir=app/ --host ${HOST} --port ${PORT} main:app"
     volumes:
       - ./app/:/app/

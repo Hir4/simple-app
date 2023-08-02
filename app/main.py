@@ -1,12 +1,11 @@
 import json
 import uuid
-from datetime import datetime
 
 import db_functions as db
+import psycopg
 import requests
 from fastapi import FastAPI, Response, status
 from validation_models import AccountModel, ExchangeModel
-import psycopg
 
 app = FastAPI()
 
@@ -22,14 +21,17 @@ async def create_account(new_account: AccountModel, response: Response):
     try:
         return db.create_account(new_account)
     except psycopg.Error as e:
-        treated_error= str(e).split("\n")
-        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        treated_error = str(e).split("\n")
+        response.status_code = status.HTTP_409_CONFLICT
         return treated_error
 
 
-@app.get("/accounts_created/")
-async def account_created():
-    return db.get_accounts()
+@app.get("/get_accounts_by_name/{account_name}")
+async def get_accounts_by_name(account_name, response: Response):
+    result = db.get_accounts_by_name(account_name)
+    if result is None:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return result
 
 
 @app.post("/exchange_rate/")

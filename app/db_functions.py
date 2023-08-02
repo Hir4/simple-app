@@ -1,12 +1,13 @@
 import psycopg
 
+
 def _connect_to_db():
     conn = psycopg.connect(
         host="postgres",
         port="5432",
         dbname="db_simple_app",
         user="user_fael",
-        password="test123"
+        password="test123",
     )
     return conn
 
@@ -26,12 +27,13 @@ def create_account(new_account):
     return "Account created successfully"
 
 
-def get_accounts():
+def get_accounts_by_name(account_name):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
-            select_query = "SELECT * FROM account"
-            cur.execute(select_query)
-            result = cur.fetchall()
+            select_query = "SELECT username FROM account WHERE username = (%s)"
+            query_data = (account_name,)
+            cur.execute(select_query, query_data)
+            result = cur.fetchone()
             return result
 
 
