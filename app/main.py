@@ -4,8 +4,9 @@ from datetime import datetime
 
 import db_functions as db
 import requests
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from validation_models import AccountModel, ExchangeModel
+import psycopg
 
 app = FastAPI()
 
@@ -16,9 +17,14 @@ async def home():
 
 
 @app.post("/create_account/")
-async def create_account(new_account: AccountModel):
+async def create_account(new_account: AccountModel, response: Response):
     new_account.id = uuid.uuid4().hex
-    return db.create_account(new_account)
+    try:
+        return db.create_account(new_account)
+    except psycopg.Error as e:
+        treated_error= str(e).split("\n")
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return treated_error
 
 
 @app.get("/accounts_created/")

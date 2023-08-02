@@ -1,13 +1,12 @@
 import psycopg
 
-
 def _connect_to_db():
     conn = psycopg.connect(
-        dbname="db_simple_app",
         host="postgres",
-        user="user_fael",
-        password="test123",
         port="5432",
+        dbname="db_simple_app",
+        user="user_fael",
+        password="test123"
     )
     return conn
 
@@ -23,7 +22,6 @@ def create_account(new_account):
                 new_account.username,
                 new_account.password,
             )
-
             cur.execute(insert_query, query_data)
     return "Account created successfully"
 
@@ -51,4 +49,4 @@ def insert_exchange_rate_table(exchange_rate_response):
                 )
 
                 cur.execute(insert_query, query_data)
-    return "Exchange rate registered."
+    return "Exchange rate registered"
