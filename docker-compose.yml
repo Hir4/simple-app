@@ -1,25 +1,20 @@
 services:
   postgres:
-    build:
-      context: ./db/
-      dockerfile: Dockerfile
-    container_name: postgres-container
-    environment:
-      POSTGRES_DB: "db_simple_app"
-      POSTGRES_USER: "user_fael"
-      POSTGRES_PASSWORD: "test123"
-      PGDATA: "/data/simple-app"       
+    image: postgres
+    env_file:
+      - .env
     volumes:
-      - /tmp/database:/data/simple-app
+      - ./db/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
   web:
-    build:
-      context: ./app/
-      dockerfile: Dockerfile
-    container_name: simple-app
+    image: python
+    env_file:
+      - .env
+    command: sh -c "pip install -r ./app/requirements.txt && uvicorn --app-dir=app/ --host ${HOST} --port ${PORT} main:app"
     volumes:
-      - ./app:/app:ro
+      - ./app/:/app/
+      - ./requirements.txt:/app/requirements.txt
     depends_on:
       - postgres
     ports:

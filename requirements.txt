@@ -1,5 +1,8 @@
-Flask
 isort
 black
 pytest
-psycopg2-binary
+psycopg[binary,pool]
+fastapi
+uvicorn[standard]
+requests
+httpx
