@@ -2,8 +2,8 @@ import os
 import uuid
 from datetime import datetime
 
+import httpx
 import psycopg
-import requests
 from validation_models import AccountModel, WeatherModel
 
 
@@ -45,26 +45,27 @@ def get_accounts_by_name(account_name: str):
 
 
 def insert_weather_table(weather_info: WeatherModel):
-    historical_weather = requests.get(
-        f"https://archive-api.open-meteo.com/v1/archive?latitude={weather_info.latitude}&longitude={weather_info.longitude}&start_date={weather_info.start_date}&end_date={weather_info.end_date}&hourly=temperature_2m"
-    )
-    treated_response = historical_weather.json()
-    total_data_returned = len(treated_response["hourly"]["time"])
-    with _connect_to_db() as conn:
-        for i in range(total_data_returned):
-            weather_info.id = uuid.uuid4().hex
-            weather_info.inserted_at = datetime.now()
-            with conn.cursor() as cur:
-                insert_query = "INSERT INTO weather (id, latitude, longitude, time, temperature, unit, inserted_at) VALUES (%s, %s, %s, %s, %s, %s, %s);"
-                query_data = (
-                    weather_info.id,
-                    treated_response["latitude"],
-                    treated_response["longitude"],
-                    treated_response["hourly"]["time"][i],
-                    treated_response["hourly"]["temperature_2m"][i],
-                    treated_response["hourly_units"]["temperature_2m"],
-                    weather_info.inserted_at,
-                )
-                cur.execute(insert_query, query_data)
+    with httpx.Client() as client:
+        historical_weather = client.get(
+            f"https://archive-api.open-meteo.com/v1/archive?latitude={weather_info.latitude}&longitude={weather_info.longitude}&start_date={weather_info.start_date}&end_date={weather_info.end_date}&hourly=temperature_2m"
+        )
+        treated_response = historical_weather.json()
+        total_data_returned = len(treated_response["hourly"]["time"])
+        with _connect_to_db() as conn:
+            for i in range(total_data_returned):
+                weather_info.id = uuid.uuid4().hex
+                weather_info.inserted_at = datetime.utcnow()
+                with conn.cursor() as cur:
+                    insert_query = "INSERT INTO weather (id, latitude, longitude, time, temperature, unit, inserted_at) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+                    query_data = (
+                        weather_info.id,
+                        treated_response["latitude"],
+                        treated_response["longitude"],
+                        treated_response["hourly"]["time"][i],
+                        treated_response["hourly"]["temperature_2m"][i],
+                        treated_response["hourly_units"]["temperature_2m"],
+                        weather_info.inserted_at,
+                    )
+                    cur.execute(insert_query, query_data)
 
     return "Weather saved successfully"
