@@ -4,5 +4,4 @@ pytest
 psycopg[binary,pool]
 fastapi
 uvicorn[standard]
-requests
 httpx
