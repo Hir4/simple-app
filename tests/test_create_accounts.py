@@ -8,7 +8,8 @@ content_create_account = {"username": "fael012", "password": "123"}
 content_create_same_account = {"username": "Fael", "password": "123"}
 
 
-@pytest.mark.api
+@pytest.mark.app
+@pytest.mark.account
 def test_create_account(httpx_request):
     response = httpx_request.post(
         f"{url}/create_account/", headers=header, json=content_create_account
@@ -17,7 +18,8 @@ def test_create_account(httpx_request):
     assert response.json() == "Account created successfully"
 
 
-@pytest.mark.api
+@pytest.mark.app
+@pytest.mark.account
 def test_create_existing_account(httpx_request):
     response = httpx_request.post(
         f"{url}/create_account/", headers=header, json=content_create_same_account

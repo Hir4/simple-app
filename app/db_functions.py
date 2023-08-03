@@ -1,33 +1,40 @@
+import os
+import uuid
+from datetime import datetime
+
 import psycopg
+import requests
+from validation_models import AccountModel, WeatherModel
 
 
 def _connect_to_db():
     conn = psycopg.connect(
-        host="postgres",
-        port="5432",
-        dbname="db_simple_app",
-        user="user_fael",
-        password="test123",
+        host=os.environ["POSTGRES_HOSTNAME"],
+        port=os.environ["POSTGRES_PORT"],
+        dbname=os.environ["POSTGRES_DB"],
+        user=os.environ["POSTGRES_USER"],
+        password=os.environ["POSTGRES_PASSWORD"],
     )
     return conn
 
 
-def create_account(new_account):
+def create_account(new_account: AccountModel):
+    new_account.id = uuid.uuid4().hex
+    new_account.inserted_at = datetime.now()
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
-            insert_query = (
-                "INSERT INTO account (id, username, password) VALUES (%s, %s, %s);"
-            )
+            insert_query = "INSERT INTO account (id, username, password, inserted_at) VALUES (%s, %s, %s, %s);"
             query_data = (
                 new_account.id,
                 new_account.username,
                 new_account.password,
+                new_account.inserted_at,
             )
             cur.execute(insert_query, query_data)
     return "Account created successfully"
 
 
-def get_accounts_by_name(account_name):
+def get_accounts_by_name(account_name: str):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
             select_query = "SELECT username FROM account WHERE username = (%s)"
@@ -37,18 +44,27 @@ def get_accounts_by_name(account_name):
             return result
 
 
-def insert_exchange_rate_table(exchange_rate_response):
+def insert_weather_table(weather_info: WeatherModel):
+    historical_weather = requests.get(
+        f"https://archive-api.open-meteo.com/v1/archive?latitude={weather_info.latitude}&longitude={weather_info.longitude}&start_date={weather_info.start_date}&end_date={weather_info.end_date}&hourly=temperature_2m"
+    )
+    treated_response = historical_weather.json()
+    total_data_returned = len(treated_response["hourly"]["time"])
     with _connect_to_db() as conn:
-        with conn.cursor() as cur:
-            for index, value in enumerate(exchange_rate_response):
-                insert_query = "INSERT INTO exchange_rate (id, symbol, amount, price, type) VALUES (%s, %s, %s, %s, %s);"
+        for i in range(total_data_returned):
+            weather_info.id = uuid.uuid4().hex
+            weather_info.inserted_at = datetime.now()
+            with conn.cursor() as cur:
+                insert_query = "INSERT INTO weather (id, latitude, longitude, time, temperature, unit, inserted_at) VALUES (%s, %s, %s, %s, %s, %s, %s);"
                 query_data = (
-                    exchange_rate_response[index]["id"],
-                    exchange_rate_response[index]["symbol"],
-                    exchange_rate_response[index]["amount"],
-                    exchange_rate_response[index]["price"],
-                    exchange_rate_response[index]["type"],
+                    weather_info.id,
+                    treated_response["latitude"],
+                    treated_response["longitude"],
+                    treated_response["hourly"]["time"][i],
+                    treated_response["hourly"]["temperature_2m"][i],
+                    treated_response["hourly_units"]["temperature_2m"],
+                    weather_info.inserted_at,
                 )
-
                 cur.execute(insert_query, query_data)
-    return "Exchange rate registered"
+
+    return "Weather saved successfully"
