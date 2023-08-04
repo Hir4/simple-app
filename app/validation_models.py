@@ -18,3 +18,6 @@ class WeatherModel(BaseModel):
     start_date: str
     end_date: str
     inserted_at: Optional[datetime] = None
+
+class HttpResult(BaseModel):
+    detail: dict
