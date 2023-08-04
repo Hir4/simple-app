@@ -1,7 +1,7 @@
 import pytest
 
 # DEFAULT
-url = "http://localhost:8181"
+url = "http://localhost:8080"
 
 
 @pytest.mark.app
@@ -9,7 +9,7 @@ url = "http://localhost:8181"
 def test_get_account_by_name(httpx_request):
     response = httpx_request.get(f"{url}/get_accounts_by_name/Fael")
     assert response.status_code == 200
-    assert response.json()["message"][0] == "Fael"
+    assert "Fael" in response.json()["detail"]["message"]
 
 
 @pytest.mark.app
@@ -17,4 +17,4 @@ def test_get_account_by_name(httpx_request):
 def test_get_inexisting_accounts_by_name(httpx_request):
     response = httpx_request.get(f"{url}/get_accounts_by_name/rodrigo_goes056061189156")
     assert response.status_code == 404
-    assert response.json()["message"] == "Account not found"
+    assert response.json()["detail"]["message"] == "Account not found"

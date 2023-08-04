@@ -19,25 +19,28 @@ def _connect_to_db():
 
 
 def create_account(new_account: AccountModel):
-    new_account.id = uuid.uuid4().hex
-    new_account.inserted_at = datetime.now()
-    with _connect_to_db() as conn:
-        with conn.cursor() as cur:
-            insert_query = "INSERT INTO account (id, username, password, inserted_at) VALUES (%s, %s, %s, %s);"
-            query_data = (
-                new_account.id,
-                new_account.username,
-                new_account.password,
-                new_account.inserted_at,
-            )
-            cur.execute(insert_query, query_data)
-    return "Account created successfully"
+    try:
+        new_account.id = uuid.uuid4().hex
+        new_account.inserted_at = datetime.now()
+        with _connect_to_db() as conn:
+            with conn.cursor() as cur:
+                insert_query = "INSERT INTO account (id, username, password, inserted_at) VALUES (%s, %s, %s, %s);"
+                query_data = (
+                    new_account.id,
+                    new_account.username,
+                    new_account.password,
+                    new_account.inserted_at,
+                )
+                cur.execute(insert_query, query_data)
+        return new_account
+    except psycopg.Error as e:
+        return str(e)
 
-
+#TODO: Pegar a conta
 def get_accounts_by_name(account_name: str):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
-            select_query = "SELECT username FROM account WHERE username = (%s)"
+            select_query = "SELECT * FROM account WHERE username = (%s)"
             query_data = (account_name,)
             cur.execute(select_query, query_data)
             result = cur.fetchone()

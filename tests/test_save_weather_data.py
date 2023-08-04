@@ -1,7 +1,7 @@
 import pytest
 
 # DEFAULT
-url = "http://localhost:8181"
+url = "http://localhost:8080"
 header = {"Content-Type": "application/json"}
 # CONTENT
 content_send_weather = {
@@ -19,4 +19,4 @@ def test_save_weather_data(httpx_request):
         f"{url}/historical_weather/", headers=header, json=content_send_weather
     )
     assert response.status_code == 200
-    assert response.json()["message"] == "Weather saved successfully"
+    assert response.json()["detail"]["message"] == "Weather saved successfully"
