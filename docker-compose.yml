@@ -5,19 +5,12 @@ services:
       - .env
     volumes:
       - ./db/:/docker-entrypoint-initdb.d/
-      # PGDATA="/data/simple-app"
     command: -p 5433
     ports:
       - "5433:5433"
   app_web:
-    image: python
-    env_file:
-      - .env
-    command: sh -c "pip install -r ./app/requirements.txt && uvicorn --app-dir=app/ --host ${HOST} --port ${PORT} main:app"
-    volumes:
-      - ./app/:/app/
-      - ./requirements.txt:/app/requirements.txt
+    build: .
     depends_on:
       - app_postgres
     ports:
-      - "8181:8181"
+      - "8080:8080"
