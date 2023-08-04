@@ -50,7 +50,7 @@ async def historical_weather(weather_info: WeatherModel):
     result = db.insert_weather_table(weather_info)
     return {"message": result}
 
-# curl -d '{"latitude": -23.5475, "longitude": -46.6361, "start_date": "2023-07-28", "end_date": "2023-08-02"}' -H "Content-Type: application/json" -X POST  http://localhost:8080/historical_weather/
-# curl -d '{"username":"fael", "password": "123"}' -H "Content-Type: application/json" -X POST http://localhost:8080/create_account/
-# curl http://localhost:8080/get_accounts_by_name/Fael
-# curl http://localhost:8080/
+# curl -d '{"latitude": -23.5475, "longitude": -46.6361, "start_date": "2023-07-28", "end_date": "2023-08-02"}' -H "Content-Type: application/json" -X POST  http://localhost:8181/historical_weather/
+# curl -d '{"username":"fael", "password": "123"}' -H "Content-Type: application/json" -X POST http://localhost:8181/create_account/
+# curl http://localhost:8181/get_accounts_by_name/Fael
+# curl http://localhost:8181/
