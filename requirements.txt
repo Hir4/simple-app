@@ -1,7 +1,0 @@
-isort
-black
-pytest
-psycopg[binary,pool]
-fastapi
-uvicorn[standard]
-httpx
