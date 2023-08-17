@@ -5,9 +5,9 @@ services:
       - .env
     volumes:
       - ./db/:/docker-entrypoint-initdb.d/
-    command: -p 5433
+    command: -p 5432
     ports:
-      - "5433:5433"
+      - "5432:5432"
   app_web:
     build: .
     depends_on:

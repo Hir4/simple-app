@@ -11,7 +11,7 @@ class AccountModel(BaseModel):
     inserted_at: Optional[datetime] = None
 
 
-class WeatherModel(BaseModel):
+class ApiWeatherModel(BaseModel):
     id: Optional[str] = None
     latitude: float
     longitude: float

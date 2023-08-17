@@ -4,7 +4,8 @@ from datetime import datetime
 
 import httpx
 import psycopg
-from validation_models import AccountModel, WeatherModel
+
+from app.validation_models import AccountModel, ApiWeatherModel
 
 
 def _connect_to_db():
@@ -37,8 +38,8 @@ def create_account(new_account: AccountModel):
         return str(e)
 
 
-# TODO: Pegar a conta
-def get_accounts_by_name(account_name: str):
+
+def get_account_by_name(account_name: str):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
             select_query = "SELECT * FROM account WHERE username = (%s)"
@@ -48,28 +49,28 @@ def get_accounts_by_name(account_name: str):
             return result
 
 
-def insert_weather_table(weather_info: WeatherModel):
+def insert_weather_table(coordinates_date: ApiWeatherModel):
     with httpx.Client() as client:
         historical_weather = client.get(
-            f"https://archive-api.open-meteo.com/v1/archive?latitude={weather_info.latitude}&longitude={weather_info.longitude}&start_date={weather_info.start_date}&end_date={weather_info.end_date}&hourly=temperature_2m"
+            f"https://archive-api.open-meteo.com/v1/archive?latitude={coordinates_date.latitude}&longitude={coordinates_date.longitude}&start_date={coordinates_date.start_date}&end_date={coordinates_date.end_date}&hourly=temperature_2m"
         )
         treated_response = historical_weather.json()
         total_data_returned = len(treated_response["hourly"]["time"])
         with _connect_to_db() as conn:
             for i in range(total_data_returned):
-                weather_info.id = uuid.uuid4().hex
-                weather_info.inserted_at = datetime.utcnow()
+                coordinates_date.id = uuid.uuid4().hex
+                coordinates_date.inserted_at = datetime.utcnow()
                 with conn.cursor() as cur:
                     insert_query = "INSERT INTO weather (id, latitude, longitude, time, temperature, unit, inserted_at) VALUES (%s, %s, %s, %s, %s, %s, %s);"
                     query_data = (
-                        weather_info.id,
+                        coordinates_date.id,
                         treated_response["latitude"],
                         treated_response["longitude"],
                         treated_response["hourly"]["time"][i],
                         treated_response["hourly"]["temperature_2m"][i],
                         treated_response["hourly_units"]["temperature_2m"],
-                        weather_info.inserted_at,
+                        coordinates_date.inserted_at,
                     )
                     cur.execute(insert_query, query_data)
 
-    return "Weather saved successfully"
+    return coordinates_date
