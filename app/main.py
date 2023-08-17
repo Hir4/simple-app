@@ -1,4 +1,3 @@
-# TODO: GITHUB ACTIONS
 from fastapi import FastAPI, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
