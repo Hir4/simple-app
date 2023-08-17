@@ -1,4 +1,4 @@
-#TODO: fazer tests como é no fastapi - ganhar velocidade
+# TODO: fazer tests como é no fastapi - ganhar velocidade
 import pytest
 
 # DEFAULT
@@ -29,7 +29,8 @@ def test_create_existing_account(httpx_request):
     )
     assert response.status_code == 409
     assert (
-        "duplicate key value violates unique constraint" in response.json()["detail"]["message"]
+        "duplicate key value violates unique constraint"
+        in response.json()["detail"]["message"]
     )
 
 

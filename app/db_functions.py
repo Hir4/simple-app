@@ -36,7 +36,8 @@ def create_account(new_account: AccountModel):
     except psycopg.Error as e:
         return str(e)
 
-#TODO: Pegar a conta
+
+# TODO: Pegar a conta
 def get_accounts_by_name(account_name: str):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
