@@ -1,17 +1,19 @@
 FROM python
 
-WORKDIR /app
-
 ENV POSTGRES_DB="db_simple_app"
 ENV POSTGRES_USER="user_fael"
 ENV POSTGRES_PASSWORD="test123"
 ENV POSTGRES_HOSTNAME=app_postgres
-ENV POSTGRES_PORT=5433
+ENV POSTGRES_PORT=5432
 
-COPY requirements.txt requirements.txt
+WORKDIR /simple-app
 
-RUN pip install -r requirements.txt
+RUN pip install poetry
 
-COPY ./app/ .
+COPY pyproject.toml pyproject.toml
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "main:app"]
+RUN poetry install
+
+COPY ./app/ ./app/
+
+CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "8080", "app.main:app"]

@@ -7,5 +7,5 @@ down_app:
 	docker compose down
 
 tests:
-	bash script_run_tests.sh
+	poetry run pytest -v
 	
