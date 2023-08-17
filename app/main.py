@@ -40,9 +40,7 @@ async def get_account_by_name(account_name: str, response: Response) -> HttpResu
         response.status_code = status.HTTP_404_NOT_FOUND
         return HttpResult(detail={"message": "Account not found"})
 
-
     return HttpResult(detail={"message": result})
-
 
 
 @app.post("/historical_weather/")

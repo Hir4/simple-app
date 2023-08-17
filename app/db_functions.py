@@ -38,7 +38,6 @@ def create_account(new_account: AccountModel):
         return str(e)
 
 
-
 def get_account_by_name(account_name: str):
     with _connect_to_db() as conn:
         with conn.cursor() as cur:
