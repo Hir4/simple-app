@@ -1,6 +1,5 @@
 # TODO: dependabot
-# TODO: usar o injetor de dependencias do
-# fastapi para injetar conexão com o banco de dados
+# TODO: usar o injetor de dependencias do fastapi para injetar conexão com o banco de dados
 from fastapi import FastAPI, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -52,11 +51,9 @@ async def historical_weather(coordinates_date: ApiWeatherModel) -> HttpResult:
     return HttpResult(detail={"message": result})
 
 
-# curl -d '{"latitude": -23.5475, "longitude": -46.6361, "start_date": "2023-07-28",
-# #"end_date": "2023-08-02"}' -H "Content-Type: application/json" -X POST  http://localhost:8080/historical_weather/
+# curl -d '{"latitude": -23.5475, "longitude": -46.6361, "start_date": "2023-07-28", "end_date": "2023-08-02"}' -H "Content-Type: application/json" -X POST  http://localhost:8080/historical_weather/
 
-# curl -d '{"username":"fael", "password": "123"}' -H
-# "Content-Type: application/json" -X POST http://localhost:8080/create_account/
+# curl -d '{"username":"fael", "password": "123"}' -H "Content-Type: application/json" -X POST http://localhost:8080/create_account/
 
 # curl http://localhost:8080/get_account_by_name/Fael
 
