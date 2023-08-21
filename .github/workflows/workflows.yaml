@@ -26,6 +26,9 @@ jobs:
 
       - name: Check Ruff
         uses: chartboost/ruff-action@v1
+        with:
+          args: --check app/ tests/
+          config: pyproject.toml
 
       - name: Test with pytest
         run: poetry run pytest -v
