@@ -24,11 +24,8 @@ jobs:
         run: |
           poetry run black --check app/ tests/
 
-      - name: Check Ruff
+      - name: Check Ruff Format
         uses: chartboost/ruff-action@v1
-        with:
-          args: --check app/ tests/
-          config: pyproject.toml
 
       - name: Test with pytest
         run: poetry run pytest -v
