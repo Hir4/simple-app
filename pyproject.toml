@@ -22,3 +22,7 @@ ruff = "0.0.285"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+# Ignore long line
+ignore = ["E501"]
