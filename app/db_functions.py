@@ -25,7 +25,12 @@ def create_account(new_account: AccountModel):
         new_account.inserted_at = datetime.now()
         with _connect_to_db() as conn:
             with conn.cursor() as cur:
-                insert_query = "INSERT INTO account (id, username, password, inserted_at) VALUES (%s, %s, %s, %s);"
+                insert_query = """INSERT INTO account (
+                                    id, 
+                                    username, 
+                                    password, 
+                                    inserted_at) 
+                                VALUES (%s, %s, %s, %s);"""
                 query_data = (
                     new_account.id,
                     new_account.username,
@@ -60,7 +65,15 @@ def insert_weather_table(coordinates_date: ApiWeatherModel):
                 coordinates_date.id = uuid.uuid4().hex
                 coordinates_date.inserted_at = datetime.utcnow()
                 with conn.cursor() as cur:
-                    insert_query = "INSERT INTO weather (id, latitude, longitude, time, temperature, unit, inserted_at) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+                    insert_query = """INSERT INTO weather (
+                                        id, 
+                                        latitude, 
+                                        longitude, 
+                                        time, 
+                                        temperature, 
+                                        unit, 
+                                        inserted_at) 
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s);"""
                     query_data = (
                         coordinates_date.id,
                         treated_response["latitude"],
