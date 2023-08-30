@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel
+from typing_extensions import TypedDict
 
 
 class AccountModel(BaseModel):
@@ -20,5 +21,25 @@ class ApiWeatherModel(BaseModel):
     inserted_at: Optional[datetime] = None
 
 
-class HttpResult(BaseModel):
+class ResponseHttpResult(BaseModel):
     detail: dict
+
+
+class ResponseGetOrCreateAccount(TypedDict):
+    id: str
+    username: str
+    password: str
+    inserted_at: datetime
+
+
+class ResponseGetAccountNotFound(TypedDict):
+    message: str
+
+
+class ResponseHistoricalWeather(TypedDict):
+    id: str
+    latitude: float
+    longitude: float
+    start_date: str
+    end_date: str
+    inserted_at: Union[str, datetime]

@@ -16,7 +16,7 @@ def test_get_account_by_name(mocker):
     account_name = "Fael"
     response = client.get(f"/get_account_by_name/{account_name}")
     assert response.status_code == 200
-    assert account_name in response.json()["detail"]["message"]
+    assert account_name == response.json()["username"]
 
 
 @pytest.mark.app
@@ -26,4 +26,4 @@ def test_get_inexisting_accounts_by_name(mocker):
     account_name = "some_name"
     response = client.get(f"/get_account_by_name/{account_name}")
     assert response.status_code == 404
-    assert "Account not found" == response.json()["detail"]["message"]
+    assert "Account not found" == response.json()["message"]
