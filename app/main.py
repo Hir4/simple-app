@@ -6,41 +6,41 @@ from fastapi.responses import JSONResponse
 
 import app.db_functions as db
 from app.validation_models import (
-    AccountModel,
-    ApiWeatherModel,
-    ResponseGetAccountNotFound,
-    ResponseGetOrCreateAccount,
-    ResponseHistoricalWeather,
-    ResponseHttpResult,
+    AccountModelRequest,
+    ApiWeatherModelRequest,
+    GetAccountNotFoundResponse,
+    GetOrCreateAccountResponse,
+    HistoricalWeatherResponse,
+    HttpResultResponse,
 )
 
 app = FastAPI()
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request, exc):
+async def validation_exception_handler(request, exc) -> JSONResponse:
     return JSONResponse(
         content=jsonable_encoder(
-            ResponseHttpResult(detail={"message": exc.errors(), "body": exc.body})
+            HttpResultResponse(detail={"message": exc.errors(), "body": exc.body})
         ),
         status_code=status.HTTP_400_BAD_REQUEST,
     )
 
 
 @app.get("/")
-async def home() -> ResponseHttpResult:
-    return ResponseHttpResult(detail={"message": "Hello World"})
+async def home() -> HttpResultResponse:
+    return HttpResultResponse(detail={"message": "Hello World"})
 
 
 @app.post("/create_account/", status_code=status.HTTP_201_CREATED)
 async def create_account(
-    new_account: AccountModel, response: Response
-) -> (ResponseGetOrCreateAccount | ResponseHttpResult):
+    new_account: AccountModelRequest, response: Response
+) -> (GetOrCreateAccountResponse | HttpResultResponse):
     result = db.create_account(new_account)
     if "duplicate" in result:
         response.status_code = status.HTTP_409_CONFLICT
-        return ResponseHttpResult(detail={"message": result})
-    return ResponseGetOrCreateAccount(
+        return HttpResultResponse(detail={"message": result})
+    return GetOrCreateAccountResponse(
         {
             "id": result["id"],
             "username": result["username"],
@@ -53,13 +53,13 @@ async def create_account(
 @app.get("/get_account_by_name/{account_name}")
 async def get_account_by_name(
     account_name: str, response: Response
-) -> (ResponseGetOrCreateAccount | ResponseGetAccountNotFound):
+) -> (GetOrCreateAccountResponse | GetAccountNotFoundResponse):
     result = db.get_account_by_name(account_name)
     if result is None:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return ResponseGetAccountNotFound({"message": "Account not found"})
+        return GetAccountNotFoundResponse({"message": "Account not found"})
     print("OLHE AQUI", result)
-    return ResponseGetOrCreateAccount(
+    return GetOrCreateAccountResponse(
         {
             "id": result[0],
             "username": result[1],
@@ -71,10 +71,10 @@ async def get_account_by_name(
 
 @app.post("/historical_weather/")
 async def historical_weather(
-    coordinates_date: ApiWeatherModel,
-) -> ResponseHistoricalWeather:
+    coordinates_date: ApiWeatherModelRequest,
+) -> HistoricalWeatherResponse:
     result = db.insert_weather_table(coordinates_date)
-    return ResponseHistoricalWeather(
+    return HistoricalWeatherResponse(
         {
             "id": result["id"],
             "latitude": result["latitude"],

@@ -5,14 +5,14 @@ from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 
-class AccountModel(BaseModel):
+class AccountModelRequest(BaseModel):
     id: Optional[str] = None
     username: str
     password: str
     inserted_at: Optional[datetime] = None
 
 
-class ApiWeatherModel(BaseModel):
+class ApiWeatherModelRequest(BaseModel):
     id: Optional[str] = None
     latitude: float
     longitude: float
@@ -21,22 +21,22 @@ class ApiWeatherModel(BaseModel):
     inserted_at: Optional[datetime] = None
 
 
-class ResponseHttpResult(BaseModel):
+class HttpResultResponse(BaseModel):
     detail: dict
 
 
-class ResponseGetOrCreateAccount(TypedDict):
+class GetOrCreateAccountResponse(TypedDict):
     id: str
     username: str
     password: str
     inserted_at: datetime
 
 
-class ResponseGetAccountNotFound(TypedDict):
+class GetAccountNotFoundResponse(TypedDict):
     message: str
 
 
-class ResponseHistoricalWeather(TypedDict):
+class HistoricalWeatherResponse(TypedDict):
     id: str
     latitude: float
     longitude: float

@@ -5,7 +5,7 @@ from datetime import datetime
 import httpx
 import psycopg
 
-from app.validation_models import AccountModel, ApiWeatherModel
+from app.validation_models import AccountModelRequest, ApiWeatherModelRequest
 
 
 def _connect_to_db():
@@ -19,7 +19,7 @@ def _connect_to_db():
     return conn
 
 
-def create_account(new_account: AccountModel):
+def create_account(new_account: AccountModelRequest):
     try:
         new_account.id = uuid.uuid4().hex
         new_account.inserted_at = datetime.now()
@@ -53,7 +53,7 @@ def get_account_by_name(account_name: str):
             return result
 
 
-def insert_weather_table(coordinates_date: ApiWeatherModel):
+def insert_weather_table(coordinates_date: ApiWeatherModelRequest):
     with httpx.Client() as client:
         historical_weather = client.get(
             f"https://archive-api.open-meteo.com/v1/archive?latitude={coordinates_date.latitude}&longitude={coordinates_date.longitude}&start_date={coordinates_date.start_date}&end_date={coordinates_date.end_date}&hourly=temperature_2m"
