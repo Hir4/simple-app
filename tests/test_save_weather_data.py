@@ -34,11 +34,5 @@ def test_save_weather_data(mocker):
         "/historical_weather/", headers=header, json=content_weather_api
     )
     assert response.status_code == 200
-    assert (
-        response.json()["detail"]["message"]["latitude"]
-        == state_coordinates["SP"]["lat"]
-    )
-    assert (
-        response.json()["detail"]["message"]["longitude"]
-        == state_coordinates["SP"]["long"]
-    )
+    assert response.json()["latitude"] == state_coordinates["SP"]["lat"]
+    assert response.json()["longitude"] == state_coordinates["SP"]["long"]

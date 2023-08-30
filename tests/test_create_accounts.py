@@ -28,8 +28,8 @@ def test_create_account(mocker):
         "/create_account/", headers=header, json=content_create_account
     )
     assert response.status_code == 201
-    assert response.json()["detail"]["message"]["username"] == "fael012"
-    assert response.json()["detail"]["message"]["password"] == "senha123"
+    assert response.json()["username"] == "fael012"
+    assert response.json()["password"] == "senha123"
 
 
 @pytest.mark.app
