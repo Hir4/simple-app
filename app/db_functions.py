@@ -1,4 +1,3 @@
-import os
 import uuid
 from datetime import datetime
 
@@ -8,22 +7,11 @@ import psycopg
 from app.validation_models import AccountModelRequest, ApiWeatherModelRequest
 
 
-def _connect_to_db():
-    conn = psycopg.connect(
-        host=os.environ["POSTGRES_HOSTNAME"],
-        port=os.environ["POSTGRES_PORT"],
-        dbname=os.environ["POSTGRES_DB"],
-        user=os.environ["POSTGRES_USER"],
-        password=os.environ["POSTGRES_PASSWORD"],
-    )
-    return conn
-
-
-def create_account(new_account: AccountModelRequest):
+def create_account(new_account: AccountModelRequest, db_conn: psycopg.Connection):
     try:
         new_account.id = uuid.uuid4().hex
         new_account.inserted_at = datetime.now()
-        with _connect_to_db() as conn:
+        with db_conn as conn:
             with conn.cursor() as cur:
                 insert_query = """INSERT INTO account (
                                     id, 
@@ -43,8 +31,8 @@ def create_account(new_account: AccountModelRequest):
         return str(e)
 
 
-def get_account_by_name(account_name: str):
-    with _connect_to_db() as conn:
+def get_account_by_name(account_name: str, db_conn: psycopg.Connection):
+    with db_conn as conn:
         with conn.cursor() as cur:
             select_query = "SELECT * FROM account WHERE username = (%s)"
             query_data = (account_name,)
@@ -53,14 +41,16 @@ def get_account_by_name(account_name: str):
             return result
 
 
-def insert_weather_table(coordinates_date: ApiWeatherModelRequest):
+def insert_weather_table(
+    coordinates_date: ApiWeatherModelRequest, db_conn: psycopg.Connection
+):
     with httpx.Client() as client:
         historical_weather = client.get(
             f"https://archive-api.open-meteo.com/v1/archive?latitude={coordinates_date.latitude}&longitude={coordinates_date.longitude}&start_date={coordinates_date.start_date}&end_date={coordinates_date.end_date}&hourly=temperature_2m"
         )
         treated_response = historical_weather.json()
         total_data_returned = len(treated_response["hourly"]["time"])
-        with _connect_to_db() as conn:
+        with db_conn as conn:
             for i in range(total_data_returned):
                 coordinates_date.id = uuid.uuid4().hex
                 coordinates_date.inserted_at = datetime.utcnow()

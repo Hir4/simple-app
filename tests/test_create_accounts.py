@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.validation_models import AccountModelRequest
 
 client = TestClient(app)
 # DEFAULT
@@ -17,12 +18,12 @@ content_create_account_wrong_fields = {"username": "test", "not_right_field": 54
 def test_create_account(mocker):
     mocker.patch(
         "app.db_functions.create_account",
-        return_value={
-            "id": "151616516848",
-            "username": "fael012",
-            "password": "senha123",
-            "inserted_at": "2023-08-10 00:00:00",
-        },
+        return_value=AccountModelRequest(
+            id="151616516848",
+            username="fael012",
+            password="senha123",
+            inserted_at="2023-08-10T00:00:00",
+        ),
     )
     response = client.post(
         "/create_account/", headers=header, json=content_create_account
