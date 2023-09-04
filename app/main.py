@@ -1,4 +1,5 @@
-import os
+# TODO: USAR DATACLASS
+# TODO: Criar um mecanismo, em que, irá acessar o banco de dados nos testes (CRIAR NOVOS TESTES)
 from typing import Annotated
 
 import psycopg
@@ -16,21 +17,6 @@ from app.validation_models import (
     HistoricalWeatherResponse,
     HttpResultResponse,
 )
-
-
-def _connect_to_db() -> psycopg.Connection:
-    try:
-        conn = psycopg.connect(
-            host=os.environ["POSTGRES_HOSTNAME"],
-            port=os.environ["POSTGRES_PORT"],
-            dbname=os.environ["POSTGRES_DB"],
-            user=os.environ["POSTGRES_USER"],
-            password=os.environ["POSTGRES_PASSWORD"],
-        )
-        return conn
-    except Exception as e:
-        print(f"Running Tests - No connection needed: {e}")
-
 
 app = FastAPI()
 
@@ -54,19 +40,19 @@ async def home() -> HttpResultResponse:
 async def create_account(
     new_account: AccountModelRequest,
     response: Response,
-    db_conn: Annotated[psycopg.Connection, Depends(_connect_to_db)],
+    db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
 ) -> (GetOrCreateAccountResponse | HttpResultResponse):
     result = db.create_account(new_account, db_conn)
-    if "duplicate" in result:
-        response.status_code = status.HTTP_409_CONFLICT
+    if isinstance(result, str):
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        if "duplicate" in result:
+            response.status_code = status.HTTP_409_CONFLICT
         return HttpResultResponse(detail={"message": result})
     return GetOrCreateAccountResponse(
-        {
-            "id": result.id,
-            "username": result.username,
-            "password": result.password,
-            "inserted_at": result.inserted_at,
-        }
+        id=result.id,
+        username=result.username,
+        password=result.password,
+        inserted_at=result.inserted_at,
     )
 
 
@@ -74,37 +60,34 @@ async def create_account(
 async def get_account_by_name(
     account_name: str,
     response: Response,
-    db_conn: Annotated[psycopg.Connection, Depends(_connect_to_db)],
+    db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
 ) -> (GetOrCreateAccountResponse | GetAccountNotFoundResponse):
     result = db.get_account_by_name(account_name, db_conn)
     if result is None:
         response.status_code = status.HTTP_404_NOT_FOUND
         return GetAccountNotFoundResponse({"message": "Account not found"})
+    print(result)
     return GetOrCreateAccountResponse(
-        {
-            "id": result[0],
-            "username": result[1],
-            "password": result[2],
-            "inserted_at": result[3],
-        }
+        id=result.id,
+        username=result.username,
+        password=result.password,
+        inserted_at=result.inserted_at,
     )
 
 
 @app.post("/historical_weather/")
 async def historical_weather(
     coordinates_date: ApiWeatherModelRequest,
-    db_conn: Annotated[psycopg.Connection, Depends(_connect_to_db)],
+    db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
 ) -> HistoricalWeatherResponse:
     result = db.insert_weather_table(coordinates_date, db_conn)
     return HistoricalWeatherResponse(
-        {
-            "id": result.id,
-            "latitude": result.latitude,
-            "longitude": result.longitude,
-            "start_date": result.start_date,
-            "end_date": result.end_date,
-            "inserted_at": result.inserted_at,
-        }
+        id=result.id,
+        latitude=result.latitude,
+        longitude=result.longitude,
+        start_date=result.start_date,
+        end_date=result.end_date,
+        inserted_at=result.inserted_at,
     )
 
 
