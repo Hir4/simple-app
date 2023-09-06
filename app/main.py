@@ -65,7 +65,6 @@ async def get_account_by_name(
     if result is None:
         response.status_code = status.HTTP_404_NOT_FOUND
         return GetAccountNotFoundResponse("Account not found")
-    print(result)
     return GetOrCreateAccountResponse(
         id=result.id,
         username=result.username,
