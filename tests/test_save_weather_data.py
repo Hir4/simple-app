@@ -1,8 +1,11 @@
+import uuid
+from datetime import datetime
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.validation_models import ApiWeatherModelRequest
+from app.validation_models import ApiWeatherModel
 
 client = TestClient(app)
 # DEFAULT
@@ -22,13 +25,13 @@ content_weather_api = {
 def test_save_weather_data(mocker):
     mocker.patch(
         "app.db_functions.insert_weather_table",
-        return_value=ApiWeatherModelRequest(
-            id="213231321",
+        return_value=ApiWeatherModel(
+            id=uuid.uuid4().hex,
             latitude=state_coordinates["SP"]["lat"],
             longitude=state_coordinates["SP"]["long"],
             start_date="2023-07-14",
             end_date="2023-08-03",
-            inserted_at="2023-08-10T00:00:00",
+            inserted_at=datetime.utcnow(),
         ),
     )
     response = client.post(

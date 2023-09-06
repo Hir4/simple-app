@@ -1,24 +1,35 @@
 from datetime import datetime
-from typing import Optional, Union
 
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 
-class AccountModelRequest(BaseModel):
-    id: Optional[str] = None
+class AccountModel(BaseModel):
+    id: str
     username: str
     password: str
-    inserted_at: Optional[datetime] = None
+    inserted_at: datetime
 
 
-class ApiWeatherModelRequest(BaseModel):
-    id: Optional[str] = None
+class AccountModelRequest(BaseModel):
+    username: str
+    password: str
+
+
+class ApiWeatherModel(BaseModel):
+    id: str
     latitude: float
     longitude: float
     start_date: str
     end_date: str
-    inserted_at: Optional[datetime] = None
+    inserted_at: datetime
+
+
+class ApiWeatherModelRequest(BaseModel):
+    latitude: float
+    longitude: float
+    start_date: str
+    end_date: str
 
 
 class HttpResultResponse(BaseModel):
@@ -42,4 +53,4 @@ class HistoricalWeatherResponse(TypedDict):
     longitude: float
     start_date: str
     end_date: str
-    inserted_at: Union[str, datetime]
+    inserted_at: datetime

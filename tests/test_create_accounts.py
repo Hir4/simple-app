@@ -1,8 +1,11 @@
+import uuid
+from datetime import datetime
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.validation_models import AccountModelRequest
+from app.validation_models import AccountModel
 
 client = TestClient(app)
 # DEFAULT
@@ -18,11 +21,11 @@ content_create_account_wrong_fields = {"username": "test", "not_right_field": 54
 def test_create_account(mocker):
     mocker.patch(
         "app.db_functions.create_account",
-        return_value=AccountModelRequest(
-            id="151616516848",
+        return_value=AccountModel(
+            id=uuid.uuid4().hex,
             username="fael012",
             password="senha123",
-            inserted_at="2023-08-10T00:00:00",
+            inserted_at=datetime.utcnow(),
         ),
     )
     response = client.post(
