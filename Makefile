@@ -6,6 +6,6 @@ run_app:
 down_app:
 	docker compose down
 
-tests:
-	poetry run pytest -v
+tests_mock:
+	TEST_ENV=test poetry run pytest -v -m unit_test
 	

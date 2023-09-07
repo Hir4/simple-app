@@ -13,9 +13,8 @@ from app.validation_models import (
 )
 
 
-# TODO: Remover try except
-def connect_to_db() -> psycopg.Connection:
-    try:
+def connect_to_db() -> psycopg.Connection | bool:
+    if not os.environ.get("TEST_ENV"):
         conn = psycopg.connect(
             host=os.environ["POSTGRES_HOSTNAME"],
             port=os.environ["POSTGRES_PORT"],
@@ -24,8 +23,8 @@ def connect_to_db() -> psycopg.Connection:
             password=os.environ["POSTGRES_PASSWORD"],
         )
         return conn
-    except Exception as e:
-        print(f"Running Tests - No connection needed: {e}")
+    else:
+        return False
 
 
 def create_account(

@@ -18,6 +18,7 @@ content_create_account_wrong_fields = {"username": "test", "not_right_field": 54
 
 @pytest.mark.app
 @pytest.mark.account
+@pytest.mark.unit_test
 def test_create_account(mocker):
     mocker.patch(
         "app.db_functions.create_account",
@@ -38,6 +39,7 @@ def test_create_account(mocker):
 
 @pytest.mark.app
 @pytest.mark.account
+@pytest.mark.unit_test
 def test_create_existing_account(mocker):
     mocker.patch(
         "app.db_functions.create_account",
@@ -55,7 +57,8 @@ def test_create_existing_account(mocker):
 
 @pytest.mark.app
 @pytest.mark.account
-def test_create_account_wrong_fields():
+@pytest.mark.unit_test
+def test_create_account_wrong_fields(mocker):
     response = client.post(
         "/create_account/", headers=header, json=content_create_account_wrong_fields
     )
