@@ -1,22 +1,23 @@
+from dataclasses import dataclass
 from datetime import datetime
 
-from pydantic import BaseModel
-from typing_extensions import TypedDict
 
-
-class AccountModel(BaseModel):
+@dataclass
+class AccountModel:
     id: str
     username: str
     password: str
     inserted_at: datetime
 
 
-class AccountModelRequest(BaseModel):
+@dataclass
+class AccountModelRequest:
     username: str
     password: str
 
 
-class ApiWeatherModel(BaseModel):
+@dataclass
+class ApiWeatherModel:
     id: str
     latitude: float
     longitude: float
@@ -25,29 +26,34 @@ class ApiWeatherModel(BaseModel):
     inserted_at: datetime
 
 
-class ApiWeatherModelRequest(BaseModel):
+@dataclass
+class ApiWeatherModelRequest:
     latitude: float
     longitude: float
     start_date: str
     end_date: str
 
 
-class HttpResultResponse(BaseModel):
+@dataclass
+class HttpResultResponse:
     detail: dict
 
 
-class GetOrCreateAccountResponse(TypedDict):
+@dataclass
+class GetOrCreateAccountResponse:
     id: str
     username: str
     password: str
     inserted_at: datetime
 
 
-class GetAccountNotFoundResponse(TypedDict):
+@dataclass
+class GetAccountNotFoundResponse:
     message: str
 
 
-class HistoricalWeatherResponse(TypedDict):
+@dataclass
+class HistoricalWeatherResponse:
     id: str
     latitude: float
     longitude: float

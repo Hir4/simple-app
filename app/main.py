@@ -1,4 +1,3 @@
-# TODO: USAR DATACLASS
 # TODO: Criar um mecanismo, em que, irá acessar o banco de dados nos testes (CRIAR NOVOS TESTES)
 from typing import Annotated
 
@@ -65,8 +64,7 @@ async def get_account_by_name(
     result = db.get_account_by_name(account_name, db_conn)
     if result is None:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return GetAccountNotFoundResponse({"message": "Account not found"})
-    print(result)
+        return GetAccountNotFoundResponse("Account not found")
     return GetOrCreateAccountResponse(
         id=result.id,
         username=result.username,
