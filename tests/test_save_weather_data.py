@@ -22,6 +22,7 @@ content_weather_api = {
 
 @pytest.mark.app
 @pytest.mark.weather
+@pytest.mark.unit_test
 def test_save_weather_data(mocker):
     mocker.patch(
         "app.db_functions.insert_weather_table",

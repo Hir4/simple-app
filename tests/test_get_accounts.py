@@ -1,5 +1,3 @@
-# TODO: Procurar como mockar connnect to db em um unico local
-# https://stackoverflow.com/questions/17801300/how-to-run-a-method-before-all-tests-in-all-classes
 import uuid
 from datetime import datetime
 
@@ -14,6 +12,7 @@ client = TestClient(app)
 
 @pytest.mark.app
 @pytest.mark.account
+@pytest.mark.unit_test
 def test_get_account_by_name(mocker):
     mocker.patch(
         "app.db_functions.get_account_by_name",
@@ -24,10 +23,6 @@ def test_get_account_by_name(mocker):
             inserted_at=datetime.utcnow(),
         ),
     )
-    mocker.patch(
-        "app.db_functions.connect_to_db",
-        return_value=None,
-    )
     account_name = "Fael"
     response = client.get(f"/get_account_by_name/{account_name}")
     assert response.status_code == 200
@@ -36,6 +31,7 @@ def test_get_account_by_name(mocker):
 
 @pytest.mark.app
 @pytest.mark.account
+@pytest.mark.unit_test
 def test_get_inexisting_accounts_by_name(mocker):
     mocker.patch("app.db_functions.get_account_by_name", return_value=None)
     account_name = "some_name"
