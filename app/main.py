@@ -49,7 +49,8 @@ async def create_account(
     db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
     env: str = None,
 ) -> (GetOrCreateAccountResponse | HttpResultResponse):
-    result = db.create_account(new_account, db_conn, env)
+    schema = testing_mode(env)
+    result = db.create_account(new_account, db_conn, schema)
     if isinstance(result, AccountAlreadyCreated):
         response.status_code = status.HTTP_409_CONFLICT
         return HttpResultResponse(detail={"message": result.get_message()})
