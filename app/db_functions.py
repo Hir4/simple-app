@@ -29,7 +29,7 @@ def connect_to_db() -> psycopg.Connection | bool:
 
 
 def create_account(
-    new_account: AccountModelRequest, db_conn: psycopg.Connection
+    new_account: AccountModelRequest, db_conn: psycopg.Connection, schema: str
 ) -> AccountModel | AccountAlreadyCreated:
     try:
         new_account_id = uuid.uuid4().hex
