@@ -17,6 +17,7 @@ uvicorn = "0.23.2"
 httpx = "0.25.0"
 black = "23.9.1"
 ruff = "0.0.287"
+requests = "2.31.0"
 
 [build-system]
 requires = ["poetry-core"]

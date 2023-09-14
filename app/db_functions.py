@@ -28,14 +28,14 @@ def connect_to_db() -> psycopg.Connection | bool:
 
 
 def create_account(
-    new_account: AccountModelRequest, db_conn: psycopg.Connection
+    new_account: AccountModelRequest, db_conn: psycopg.Connection, schema: str
 ) -> AccountModel | str:
     try:
         new_account_id = uuid.uuid4().hex
         new_account_inserted_at = datetime.now()
         with db_conn as conn:
             with conn.cursor() as cur:
-                insert_query = """INSERT INTO account (
+                insert_query = f"""INSERT INTO {schema}.account (
                                     id, 
                                     username, 
                                     password, 
@@ -58,10 +58,10 @@ def create_account(
         return str(e)
 
 
-def get_account_by_name(account_name: str, db_conn: psycopg.Connection):
+def get_account_by_name(account_name: str, db_conn: psycopg.Connection, schema: str):
     with db_conn as conn:
         with conn.cursor() as cur:
-            select_query = "SELECT * FROM account WHERE username = (%s)"
+            select_query = f"SELECT * FROM {schema}.account WHERE username = (%s)"
             query_data = (account_name,)
             cur.execute(select_query, query_data)
             result = cur.fetchone()
@@ -76,7 +76,7 @@ def get_account_by_name(account_name: str, db_conn: psycopg.Connection):
 
 
 def insert_weather_table(
-    coordinates_date: ApiWeatherModelRequest, db_conn: psycopg.Connection
+    coordinates_date: ApiWeatherModelRequest, db_conn: psycopg.Connection, schema: str
 ):
     with httpx.Client() as client:
         historical_weather = client.get(
@@ -91,7 +91,7 @@ def insert_weather_table(
                 coordinates_date_id = uuid.uuid4().hex
                 coordinates_date_inserted_at = datetime.utcnow()
                 with conn.cursor() as cur:
-                    insert_query = """INSERT INTO weather (
+                    insert_query = f"""INSERT INTO {schema}.weather (
                                         id, 
                                         latitude, 
                                         longitude, 
