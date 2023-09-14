@@ -5,6 +5,7 @@ from datetime import datetime
 import httpx
 import psycopg
 
+from app.exceptions import AccountAlreadyCreated
 from app.validation_models import (
     AccountModel,
     AccountModelRequest,
@@ -29,7 +30,7 @@ def connect_to_db() -> psycopg.Connection | bool:
 
 def create_account(
     new_account: AccountModelRequest, db_conn: psycopg.Connection, schema: str
-) -> AccountModel | str:
+) -> AccountModel | AccountAlreadyCreated:
     try:
         new_account_id = uuid.uuid4().hex
         new_account_inserted_at = datetime.now()
@@ -54,8 +55,8 @@ def create_account(
             password=new_account.password,
             inserted_at=new_account_inserted_at,
         )
-    except psycopg.Error as e:  # TODO: Tratar o erro melhor, criar minhas exceptions
-        return str(e)
+    except psycopg.Error:
+        return AccountAlreadyCreated()
 
 
 def get_account_by_name(account_name: str, db_conn: psycopg.Connection, schema: str):
