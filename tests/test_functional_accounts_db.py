@@ -35,8 +35,7 @@ def test_create_existing_account():
     )
     assert response.status_code == 409
     assert (
-        "duplicate key value violates unique constraint"
-        in response.json()["detail"]["message"]
+        "Username duplicated, already exists." in response.json()["detail"]["message"]
     )
 
 
@@ -50,4 +49,4 @@ def test_create_account_wrong_fields():
         json=content_create_account_wrong_fields,
     )
     assert response.status_code == 400
-    assert "field required" in str(response.json()["detail"]["message"]).lower()
+    assert "Field required" == response.json()["detail"]["message"][0]["msg"]
