@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.validation_models import AccountModel
+from app.exceptions import AccountAlreadyCreated
 
 client = TestClient(app)
 # DEFAULT
@@ -43,15 +44,14 @@ def test_create_account(mocker):
 def test_create_existing_account(mocker):
     mocker.patch(
         "app.db_functions.create_account",
-        return_value="duplicate key value violates unique constraint",
+        return_value=AccountAlreadyCreated(),
     )
     response = client.post(
         "/create_account/", headers=header, json=content_create_same_account
     )
     assert response.status_code == 409
     assert (
-        "duplicate key value violates unique constraint"
-        in response.json()["detail"]["message"]
+        "Username duplicated, already exists." in response.json()["detail"]["message"]
     )
 
 
@@ -63,4 +63,4 @@ def test_create_account_wrong_fields(mocker):
         "/create_account/", headers=header, json=content_create_account_wrong_fields
     )
     assert response.status_code == 400
-    assert "field required" in str(response.json()["detail"]["message"]).lower()
+    assert "Field required" == response.json()["detail"]["message"][0]["msg"]
