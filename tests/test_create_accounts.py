@@ -4,9 +4,9 @@ from datetime import datetime
 import pytest
 from fastapi.testclient import TestClient
 
+from app.exceptions import AccountAlreadyCreated
 from app.main import app
 from app.validation_models import AccountModel
-from app.exceptions import AccountAlreadyCreated
 
 client = TestClient(app)
 # DEFAULT
