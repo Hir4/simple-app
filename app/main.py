@@ -1,4 +1,3 @@
-# TODO: Criar um mecanismo, em que, irá acessar o banco de dados nos testes (CRIAR NOVOS TESTES)
 from typing import Annotated
 
 import psycopg
@@ -21,6 +20,13 @@ from app.validation_models import (
 app = FastAPI()
 
 
+def testing_mode(env):
+    if env:
+        return "testing_env"
+    else:
+        return "public"
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc) -> JSONResponse:
     return JSONResponse(
@@ -41,6 +47,7 @@ async def create_account(
     new_account: AccountModelRequest,
     response: Response,
     db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
+    env: str = None,
 ) -> (GetOrCreateAccountResponse | HttpResultResponse):
     result = db.create_account(new_account, db_conn)
     if isinstance(result, AccountAlreadyCreated):
@@ -59,8 +66,10 @@ async def get_account_by_name(
     account_name: str,
     response: Response,
     db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
+    env: str = None,
 ) -> (GetOrCreateAccountResponse | GetAccountNotFoundResponse):
-    result = db.get_account_by_name(account_name, db_conn)
+    schema = testing_mode(env)
+    result = db.get_account_by_name(account_name, db_conn, schema)
     if result is None:
         response.status_code = status.HTTP_404_NOT_FOUND
         return GetAccountNotFoundResponse("Account not found")
@@ -76,8 +85,11 @@ async def get_account_by_name(
 async def historical_weather(
     coordinates_date: ApiWeatherModelRequest,
     db_conn: Annotated[psycopg.Connection, Depends(db.connect_to_db)],
+    env: str = None,
 ) -> HistoricalWeatherResponse:
-    result = db.insert_weather_table(coordinates_date, db_conn)
+    schema = testing_mode(env)
+
+    result = db.insert_weather_table(coordinates_date, db_conn, schema)
     return HistoricalWeatherResponse(
         id=result.id,
         latitude=result.latitude,
@@ -90,7 +102,7 @@ async def historical_weather(
 
 # curl -d '{"latitude": -23.5475, "longitude": -46.6361, "start_date": "2023-07-28", "end_date": "2023-08-02"}' -H "Content-Type: application/json" -X POST  http://localhost:8080/historical_weather/
 
-# curl -d '{"username":"Fael", "password": "123"}' -H "Content-Type: application/json" -X POST http://localhost:8080/create_account/
+# curl -d '{"username":"fael", "password": "123"}' -H "Content-Type: application/json" -X POST http://localhost:8080/create_account/
 
 # curl http://localhost:8080/get_account_by_name/Fael
 
