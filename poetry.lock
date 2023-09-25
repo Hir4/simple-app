@@ -460,13 +460,13 @@ files = [
 
 [[package]]
 name = "psycopg-pool"
-version = "3.1.7"
+version = "3.1.8"
 description = "Connection Pool for Psycopg"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "psycopg-pool-3.1.7.tar.gz", hash = "sha256:d02741dc48303495f4021900630442af87d6b1c3bfd1a3ece54cc11aa43d7dde"},
-    {file = "psycopg_pool-3.1.7-py3-none-any.whl", hash = "sha256:ca1f2c366b5910acd400e16e812912827c57836af638c1717ba495111d22073b"},
+    {file = "psycopg-pool-3.1.8.tar.gz", hash = "sha256:53d9691503b538d419bf147359028633780294976743b1654dbf5f3a85b675db"},
+    {file = "psycopg_pool-3.1.8-py3-none-any.whl", hash = "sha256:dc9b177e749aae4ad155d22f9d02ccb14fe2bf30792227fb02317361b446ee39"},
 ]
 
 [package.dependencies]
@@ -795,4 +795,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "141e4b3fdf25c17a55688fd92b9cd725dcbc4037e86df04c3e44c3c9d5f3750b"
+content-hash = "44cad58566f2ec335e847173cc079dc12c09319871196d4a14b1725fc7a87ba3"
